@@ -17,7 +17,8 @@ import SubtaskList from '../components/SubtaskList';
 import TodoForm from '../components/TodoForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 
-const API = '/api/todos';
+const API_BASE = import.meta.env.VITE_API_URL || '';
+const API = `${API_BASE}/api/todos`;
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'Not set';
