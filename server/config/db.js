@@ -1,43 +1,31 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+let isConnected = false;
 
 const connectDB = async () => {
+  if (isConnected && mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    console.error('❌ MONGODB_URI is not defined in environment variables');
-    throw new Error('MONGODB_URI is missing in environment variables');
-  }
-
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(uri, opts).then((mongooseInstance) => {
-      console.log(`✅ MongoDB Connected: ${mongooseInstance.connection.host}`);
-      return mongooseInstance;
-    });
+    throw new Error('MONGODB_URI is not defined in environment variables');
   }
 
   try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    console.error(`❌ MongoDB Connection Error: ${e.message}`);
-    throw e;
-  }
+    const db = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000, // 5s timeout instead of 30s
+    });
 
-  return cached.conn;
+    isConnected = db.connections[0].readyState === 1;
+    console.log(`✅ MongoDB Connected: ${db.connection.host}`);
+    return db.connection;
+  } catch (error) {
+    isConnected = false;
+    console.error(`❌ MongoDB Connection Error: ${error.message}`);
+    throw error;
+  }
 };
 
 module.exports = connectDB;
