@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
 require('dotenv').config();
 
 const connectDB = require('./config/db');
@@ -8,92 +7,77 @@ const todoRoutes = require('./routes/todos');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all origins and headers
+// Must be first - handle OPTIONS preflight and CORS
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
 
-app.use(express.json());
-app.use(morgan('dev'));
+app.use(express.json({ limit: '10mb' }));
 
-// Root endpoint (Diagnostic - does not require DB)
+// Root endpoint - no DB needed, instant response
 app.get('/', (req, res) => {
-  res.json({
+  res.status(200).json({
     success: true,
-    message: '🚀 ZipTrip Todo API is live!',
-    status: 'online',
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      health: '/api/health',
-      todos: '/api/todos',
-      stats: '/api/todos/stats'
-    }
+    message: 'ZipTrip Todo API is live!',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
   });
 });
 
-// Health check endpoint (Diagnostic - tests DB connection)
+// Health check - tests DB connection
 app.get('/api/health', async (req, res) => {
   let dbStatus = 'disconnected';
   let dbError = null;
-
   try {
     await connectDB();
     dbStatus = 'connected';
   } catch (err) {
     dbError = err.message;
   }
-
-  res.json({
+  res.status(200).json({
     status: 'ok',
-    environment: process.env.VERCEL ? 'vercel-serverless' : 'local-node',
-    mongodb: {
-      status: dbStatus,
-      error: dbError,
-      hasMongoUri: !!process.env.MONGODB_URI
+    mongodb: { status: dbStatus, error: dbError },
+    env: {
+      hasMongoUri: !!process.env.MONGODB_URI,
+      nodeEnv: process.env.NODE_ENV || 'development'
     },
     timestamp: new Date().toISOString()
   });
 });
 
-// Middleware to ensure DB connection before executing Todo routes
-const ensureDbConnection = async (req, res, next) => {
+// DB connection middleware only for /api/todos routes
+app.use('/api/todos', async (req, res, next) => {
   try {
     await connectDB();
     next();
-  } catch (error) {
-    console.error('Database connection failed in route:', error.message);
-    res.status(500).json({
+  } catch (err) {
+    return res.status(500).json({
       success: false,
       error: 'Database Connection Error',
-      message: error.message || 'Failed to connect to MongoDB. Please ensure MONGODB_URI is set in Vercel environment variables and 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.'
+      message: err.message
     });
   }
-};
+}, todoRoutes);
 
-// Todo Routes protected by DB connection
-app.use('/api/todos', ensureDbConnection, todoRoutes);
-
-// Error handling middleware
 app.use(errorHandler);
 
-// Handle 404
 app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: `Route ${req.originalUrl} not found`
-  });
+  res.status(404).json({ success: false, error: `Route ${req.originalUrl} not found` });
 });
 
-// Only listen locally (not in serverless environments)
-if (!process.env.VERCEL) {
+// Export for Vercel serverless
+module.exports = app;
+
+// Listen only when running locally
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    connectDB().catch(console.error);
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 }
-
-// Export app for Vercel Serverless Function
-module.exports = app;
