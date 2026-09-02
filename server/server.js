@@ -8,14 +8,32 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// Must be first - handle OPTIONS preflight and CORS
-app.use(cors({
+// 1. Universal CORS middleware (handles headers & preflight)
+const corsOptions = {
   origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  credentials: false,
   preflightContinue: false,
-  optionsSuccessStatus: 200
-}));
+  optionsSuccessStatus: 200,
+  maxAge: 86400,
+};
+
+app.use(cors(corsOptions));
+
+// Explicit preflight handler for all routes
+app.options('*', cors(corsOptions));
+
+// 2. Custom header safeguard to guarantee CORS headers on every response (including errors)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -23,7 +41,7 @@ app.use(express.json({ limit: '10mb' }));
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'ZipTrip Todo API is live!',
+    message: 'ZipTrip Todo API is live on Render!',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
@@ -50,7 +68,7 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-// DB connection middleware only for /api/todos routes
+// DB connection middleware for /api/todos routes
 app.use('/api/todos', async (req, res, next) => {
   try {
     await connectDB();
@@ -70,14 +88,15 @@ app.use((req, res) => {
   res.status(404).json({ success: false, error: `Route ${req.originalUrl} not found` });
 });
 
-// Export for Vercel serverless
+// Export for serverless environments (if any)
 module.exports = app;
 
-// Listen only when running locally
-if (require.main === module) {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
+// Start server (for Render, local dev, Docker, etc.)
+const PORT = process.env.PORT || 5000;
+if (require.main === module || process.env.RENDER || process.env.NODE_ENV === 'production') {
+  app.listen(PORT, '0.0.0.0', () => {
     connectDB().catch(console.error);
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
   });
 }
+

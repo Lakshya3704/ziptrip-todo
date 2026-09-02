@@ -6,9 +6,7 @@ import TodoItem from '../components/TodoItem';
 import TodoForm from '../components/TodoForm';
 import TodoStats from '../components/TodoStats';
 import ConfirmDialog from '../components/ConfirmDialog';
-
-const API_BASE = import.meta.env.VITE_API_URL || '';
-const API = `${API_BASE}/api/todos`;
+import { TODOS_API as API } from '../config/api';
 
 export default function TodosListPage() {
   const [todos, setTodos] = useState([]);

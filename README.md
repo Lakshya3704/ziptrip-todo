@@ -4,9 +4,9 @@ A full-stack, feature-rich Todo application built with **React** (multi-page), *
 
 ## 🌐 Live Deployment
 
-- 🚀 **Frontend / Client Live App:** [https://client-one-swart-72.vercel.app/todos](https://client-one-swart-72.vercel.app/todos)
-- ⚙️ **Backend API Server:** [https://server-eta-orcin-90.vercel.app/](https://server-eta-orcin-90.vercel.app/)
-- 🩺 **API Health Check:** [https://server-eta-orcin-90.vercel.app/api/health](https://server-eta-orcin-90.vercel.app/api/health)
+- 🚀 **Frontend / Client Live App:** [https://ziptriptodo.netlify.app/](https://ziptriptodo.netlify.app/) ([/todos](https://ziptriptodo.netlify.app/todos))
+- ⚙️ **Backend API Server (Render):** [https://ziptrip-todo.onrender.com/](https://ziptrip-todo.onrender.com/)
+- 🩺 **API Health Check:** [https://ziptrip-todo.onrender.com/api/health](https://ziptrip-todo.onrender.com/api/health)
 
 
 ## 🚀 Tech Stack
