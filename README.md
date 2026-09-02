@@ -2,6 +2,13 @@
 
 A full-stack, feature-rich Todo application built with **React** (multi-page), **Node.js/Express**, and **MongoDB**.
 
+## 🌐 Live Deployment
+
+- 🚀 **Frontend / Client Live App:** [https://client-one-swart-72.vercel.app/todos](https://client-one-swart-72.vercel.app/todos)
+- ⚙️ **Backend API Server:** [https://server-eta-orcin-90.vercel.app/](https://server-eta-orcin-90.vercel.app/)
+- 🩺 **API Health Check:** [https://server-eta-orcin-90.vercel.app/api/health](https://server-eta-orcin-90.vercel.app/api/health)
+
+
 ## 🚀 Tech Stack
 
 | Layer | Technology |

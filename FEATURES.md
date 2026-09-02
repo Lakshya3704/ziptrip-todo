@@ -2,6 +2,9 @@
 
 This document provides a comprehensive description of all features and functionalities of the ZipTrip Todo Application.
 
+- 🌐 **Live Demo (Frontend):** [https://client-one-swart-72.vercel.app/todos](https://client-one-swart-72.vercel.app/todos)
+- ⚙️ **Live API (Backend):** [https://server-eta-orcin-90.vercel.app/](https://server-eta-orcin-90.vercel.app/)
+
 ---
 
 ## Table of Contents

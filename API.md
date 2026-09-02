@@ -1,6 +1,8 @@
 # API Documentation
 
-Base URL: `http://localhost:5000/api`
+- **Live Base URL:** `https://server-eta-orcin-90.vercel.app/api`
+- **Local Base URL:** `http://localhost:5000/api`
+- **Frontend App:** `https://client-one-swart-72.vercel.app/todos`
 
 ---
 
