@@ -2,8 +2,10 @@
 
 This document provides a comprehensive description of all features and functionalities of the ZipTrip Todo Application.
 
-- 🌐 **Live Demo (Netlify Frontend):** [https://ziptriptodo.netlify.app/](https://ziptriptodo.netlify.app/)
+- 🌐 **Live Demo (Vercel):** [https://client-one-swart-72.vercel.app/todos](https://client-one-swart-72.vercel.app/todos)
+- 🌐 **Live Demo (Netlify):** [https://ziptriptodo.netlify.app/](https://ziptriptodo.netlify.app/)
 - ⚙️ **Live API (Render Backend):** [https://ziptrip-todo.onrender.com/](https://ziptrip-todo.onrender.com/)
+
 
 ---
 

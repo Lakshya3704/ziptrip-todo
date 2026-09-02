@@ -1,9 +1,10 @@
 // Centralized API configuration
-// In development: Uses empty string '' which Vite proxies to http://localhost:5000
-// In production: Uses VITE_API_URL or defaults directly to Render backend
-export const API_BASE = 
-  import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
-    ? import.meta.env.VITE_API_URL
-    : (import.meta.env.DEV ? '' : 'https://ziptrip-todo.onrender.com');
+// - Uses VITE_API_URL if set in hosting platform environment variables
+// - Defaults to '' (relative /api/todos) which is proxied by:
+//   * Vite dev server in local development
+//   * Vercel rewrite rules (vercel.json) in Vercel production
+//   * Netlify redirect rules (_redirects / netlify.toml) in Netlify production
+export const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export const TODOS_API = `${API_BASE}/api/todos`;
+

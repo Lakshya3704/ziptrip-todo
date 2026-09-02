@@ -2,7 +2,9 @@
 
 - **Live Base URL (Render):** `https://ziptrip-todo.onrender.com/api`
 - **Local Base URL:** `http://localhost:5000/api`
+- **Frontend App (Vercel):** `https://client-one-swart-72.vercel.app/todos`
 - **Frontend App (Netlify):** `https://ziptriptodo.netlify.app/todos`
+
 
 ---
 
