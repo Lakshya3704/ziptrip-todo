@@ -1,6 +1,6 @@
 // Centralized API configuration
 // In development: Uses empty string '' which Vite proxies to http://localhost:5000
-// In production (Netlify/Vercel/etc.): Uses VITE_API_URL or defaults directly to Render backend
+// In production: Uses VITE_API_URL or defaults directly to Render backend
 export const API_BASE = 
   import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
     ? import.meta.env.VITE_API_URL
