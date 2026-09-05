@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 
 const CATEGORIES = ['personal', 'work', 'shopping', 'health', 'education', 'finance', 'other'];
 const PRIORITIES = ['low', 'medium', 'high', 'urgent'];
+const ASSIGNEES = [
+  'Unassigned',
+  'Lakshya',
+  'John Doe',
+  'Jane Doe',
+];
 
 export default function TodoForm({ onSubmit, onClose, initialData = null }) {
   const isEditing = !!initialData;
@@ -13,6 +19,7 @@ export default function TodoForm({ onSubmit, onClose, initialData = null }) {
     category: initialData?.category || 'personal',
     dueDate: initialData?.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] : '',
     tags: initialData?.tags?.join(', ') || '',
+    assignedTo: initialData?.assignedTo || 'Unassigned',
   });
 
   const [errors, setErrors] = useState({});
@@ -37,7 +44,7 @@ export default function TodoForm({ onSubmit, onClose, initialData = null }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+ const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -53,12 +60,28 @@ export default function TodoForm({ onSubmit, onClose, initialData = null }) {
       category: formData.category,
       dueDate: formData.dueDate || null,
       tags,
+      assignedTo: formData.assignedTo,
     });
   };
 
   return (
     <div className="todo-form-overlay" onClick={onClose}>
       <form className="todo-form" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-group__label">Assign To</label>
+          <select
+            name="assignedTo"
+            className="form-group__select"
+            value={formData.assignedTo}
+            onChange={handleChange}
+          >
+            {ASSIGNEES.map(person => (
+              <option key={person} value={person}>
+                {person}
+              </option>
+            ))}
+          </select>
+        </div>
         <h2 className="todo-form__title">
           {isEditing ? '✏️ Edit Todo' : '✨ Create New Todo'}
         </h2>
